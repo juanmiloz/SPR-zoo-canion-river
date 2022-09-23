@@ -18,7 +18,13 @@ public enum CodesError {
     CODE_09("CODE_09", "The height entered is outside the established ranges"),
     CODE_10("CODE_10", "The gender of the parents is the same"),
     CODE_11("CODE_11", "The date entered is greater than current date"),
-    CODE_12("CODE_12", "The name you entered is already registered, please change the name");
+    CODE_12("CODE_12", "The name you entered is already registered, please change the name"),
+    CODE_13("CODE_13", "The mother's id entered does not belong to any tiger"),
+    CODE_14("CODE_14", "The father's id entered does not belong to any tiger"),
+    CODE_15("CODE_15", "Tiger admitted as mother is male"),
+    CODE_16("CODE_16", "Tiger admitted as father is female");
+
+
 
 
     private String code;

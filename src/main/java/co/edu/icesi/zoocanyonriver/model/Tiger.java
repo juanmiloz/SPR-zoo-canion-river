@@ -25,9 +25,9 @@ public class Tiger {
     @Type(type = "org.hibernate.type.UUIDCharType")
     private UUID id;
 
-    private String uuidParent1;
+    private String mother;
 
-    private String uuidParent2;
+    private String father;
 
     private String name;
 

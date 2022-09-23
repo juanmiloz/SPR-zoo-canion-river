@@ -1,6 +1,7 @@
 package co.edu.icesi.zoocanyonriver.api;
 
 import co.edu.icesi.zoocanyonriver.dto.TigerDTO;
+import co.edu.icesi.zoocanyonriver.dto.TigerResponseDTO;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -9,7 +10,7 @@ import java.util.List;
 public interface TigerApi {
 
     @GetMapping("/{tigerName}")
-    public List<TigerDTO> getTiger(@PathVariable String tigerName);
+    public TigerResponseDTO getTiger(@PathVariable String tigerName);
 
     @PostMapping()
     public TigerDTO createTiger(@RequestBody TigerDTO tigerDTO);

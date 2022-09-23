@@ -1,6 +1,5 @@
 package co.edu.icesi.zoocanyonriver.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,13 +12,8 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class TigerDTO {
-
+public class TigerResponseDTO {
     private UUID id;
-
-    private String mother;
-
-    private String father;
 
     private String name;
 
@@ -31,6 +25,9 @@ public class TigerDTO {
 
     private String height;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime arriveDate;
+
+    private TigerDTO mother;
+
+    private TigerDTO father;
 }

@@ -3,8 +3,10 @@ package co.edu.icesi.zoocanyonriver.service.impl;
 import co.edu.icesi.zoocanyonriver.constants.CodesError;
 import co.edu.icesi.zoocanyonriver.constants.Genders;
 import co.edu.icesi.zoocanyonriver.constants.TigerCharacteristics;
+import co.edu.icesi.zoocanyonriver.dto.TigerResponseDTO;
 import co.edu.icesi.zoocanyonriver.error.exception.TigerDemoError;
 import co.edu.icesi.zoocanyonriver.error.exception.TigerDemoException;
+import co.edu.icesi.zoocanyonriver.mapper.TigerMapper;
 import co.edu.icesi.zoocanyonriver.model.Tiger;
 import co.edu.icesi.zoocanyonriver.repository.TigerRepository;
 import co.edu.icesi.zoocanyonriver.service.TigerService;
@@ -13,7 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -37,8 +38,10 @@ public class TigerServiceImpl implements TigerService {
 
     private final TigerRepository tigerRepository;
 
+    private final TigerMapper tigerMapper;
+
     @Override
-    public Tiger getTiger(String tigerName) {
+    public TigerResponseDTO getTiger(String tigerName) {
         return searchByName(tigerName,StreamSupport.stream(tigerRepository.findAll().spliterator(), false).collect(Collectors.toList()));
     }
 
@@ -50,11 +53,19 @@ public class TigerServiceImpl implements TigerService {
         }
         throw new TigerDemoException(HttpStatus.BAD_REQUEST, new TigerDemoError(CodesError.CODE_04.getCode(), CodesError.CODE_04.getMessage()));
     }
-    private Tiger searchByName(String tigerName, List<Tiger> tigers){
+    private TigerResponseDTO searchByName(String tigerName, List<Tiger> tigers){
         for(Tiger tiger: tigers){
-            if(tiger.getName().equalsIgnoreCase(tigerName)){return tiger;}
+            if(tiger.getName().equalsIgnoreCase(tigerName)){return getTigerDTOParents(tiger);}
         }
         throw new TigerDemoException(HttpStatus.BAD_REQUEST, new TigerDemoError(CodesError.CODE_03.getCode(), CodesError.CODE_03.getMessage()));
+    }
+
+    private TigerResponseDTO getTigerDTOParents(Tiger tiger){
+        Tiger mother = getTiger(UUID.fromString(tiger.getMother()));
+        Tiger father = getTiger(UUID.fromString(tiger.getFather()));
+        TigerResponseDTO tigerResponseDTO = tigerMapper.fromTigerToTigerResponseDTO(tiger, mother, father);
+
+        return tigerResponseDTO;
     }
 
     @Override
@@ -79,21 +90,49 @@ public class TigerServiceImpl implements TigerService {
     }
 
     private void verifyExistenceParents(Tiger tiger){
-        if(tiger.getUuidParent1() != null){
-            getTiger(UUID.fromString(tiger.getUuidParent1()));
+        if(tiger.getMother() != null){
+            verifyMother(UUID.fromString(tiger.getMother()));
         }
-        if(tiger.getUuidParent2() != null){
-            getTiger(UUID.fromString(tiger.getUuidParent2()));
+        if(tiger.getFather() != null){
+            verifyFather(UUID.fromString(tiger.getFather()));
         }
-        verifyDifferentGenres(tiger);
+    }
+
+    private void verifyMother(UUID uuidMother){
+        Optional<Tiger> mother = tigerRepository.findById(uuidMother);
+        if(!mother.isPresent()){
+            throw new TigerDemoException(HttpStatus.BAD_REQUEST, new TigerDemoError(CodesError.CODE_13.getCode(), CodesError.CODE_13.getMessage()));
+        }else{
+            verifyGenderMother(mother.get().getGender());
+        }
+    }
+    private void verifyGenderMother(String gender){
+        if(!gender.equalsIgnoreCase(Genders.FEMALE.getValue())){
+            throw new TigerDemoException(HttpStatus.BAD_REQUEST, new TigerDemoError(CodesError.CODE_15.getCode(), CodesError.CODE_15.getMessage()));
+        }
+    }
+
+    private void verifyFather(UUID uuidFather){
+        Optional<Tiger> father = tigerRepository.findById(uuidFather);
+        if(!father.isPresent()){
+            throw new TigerDemoException(HttpStatus.BAD_REQUEST, new TigerDemoError(CodesError.CODE_14.getCode(), CodesError.CODE_14.getMessage()));
+        }else{
+            verifyGenderFather(father.get().getGender());
+        }
+    }
+
+    private void verifyGenderFather(String gender){
+        if(!gender.equalsIgnoreCase(Genders.MALE.getValue())){
+            throw new TigerDemoException(HttpStatus.BAD_REQUEST, new TigerDemoError(CodesError.CODE_16.getCode(), CodesError.CODE_16.getMessage()));
+        }
     }
 
     private void verifyDifferentGenres(Tiger tiger){
-        String uuidParent1 = tiger.getUuidParent1();
-        String uuidParent2 = tiger.getUuidParent2();
+        String uuidMother = tiger.getMother();
+        String uuidFather = tiger.getFather();
 
-        if(uuidParent1 != null && uuidParent2 != null){
-            if(getGenreParent(uuidParent1).equals(getGenreParent(uuidParent2))){
+        if(uuidMother != null && uuidFather != null){
+            if(getGenreParent(uuidMother).equals(getGenreParent(uuidFather))){
                 throw new TigerDemoException(HttpStatus.BAD_REQUEST, new TigerDemoError(CodesError.CODE_10.getCode(), CodesError.CODE_10.getMessage()));
             }
         }
@@ -103,26 +142,15 @@ public class TigerServiceImpl implements TigerService {
         return getTiger(UUID.fromString(uuid)).getGender();
     }
 
-    private void verifyGenderParents(){
-        /*String uuidParent1 = tiger.getUuidParent1();
-        String uuidParent2 = tiger.getUuidParent2();
-        if(uuidParent1 != null && uuidParent2 != null){
-            verifyGenderParents();
-            verifyGenderParents();
-        }*/
-    }
-
 
     private void verifyHeight(String height) {
-        int a = Integer.valueOf(height);
-
-        if(Integer.valueOf(height)> TigerCharacteristics.MAX_HEIGHT.getValue() ||Integer.valueOf(height)< TigerCharacteristics.MIN_HEIGHT.getValue()){
+        if(Integer.valueOf(height)> TigerCharacteristics.MAX_HEIGHT ||Integer.valueOf(height)< TigerCharacteristics.MIN_HEIGHT){
             throw new TigerDemoException(HttpStatus.BAD_REQUEST, new TigerDemoError(CodesError.CODE_09.getCode(), CodesError.CODE_09.getMessage()));
         }
     }
 
     private void verifyAge(String age) {
-        if(Integer.parseInt(age)>TigerCharacteristics.MAX_AGE.getValue()||Integer.parseInt(age)<TigerCharacteristics.MIN_AGE.getValue()){
+        if(Integer.parseInt(age)>TigerCharacteristics.MAX_AGE||Integer.parseInt(age)<TigerCharacteristics.MIN_AGE){
             throw new TigerDemoException(HttpStatus.BAD_REQUEST, new TigerDemoError(CodesError.CODE_08.getCode(), CodesError.CODE_08.getMessage()));
         }
     }
@@ -138,7 +166,7 @@ public class TigerServiceImpl implements TigerService {
     }
 
     private void verifyWeightMale(double weight){
-        if(weight>TigerCharacteristics.MALE_MAX_WEIGHT.getValue()||weight<TigerCharacteristics.MALE_MIN_WEIGHT.getValue()){
+        if(weight>TigerCharacteristics.MALE_MAX_WEIGHT||weight<TigerCharacteristics.MALE_MIN_WEIGHT){
             throw new TigerDemoException(HttpStatus.BAD_REQUEST, new TigerDemoError(CodesError.CODE_05.getCode(), CodesError.CODE_05.getMessage()));
         }
     }
@@ -148,7 +176,7 @@ public class TigerServiceImpl implements TigerService {
     }
 
     private void verifyWeightFemale(double weight){
-        if(weight>TigerCharacteristics.FEMALE_MAX_WEIGHT.getValue()||weight<TigerCharacteristics.FEMALE_MIN_WEIGHT.getValue()){
+        if(weight>TigerCharacteristics.FEMALE_MAX_WEIGHT||weight<TigerCharacteristics.FEMALE_MIN_WEIGHT){
             throw new TigerDemoException(HttpStatus.BAD_REQUEST, new TigerDemoError(CodesError.CODE_06.getCode(), CodesError.CODE_06.getMessage()));
         }
     }

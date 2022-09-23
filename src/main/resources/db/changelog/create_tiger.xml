@@ -10,8 +10,8 @@
             <column name="id" type="UUID">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="uuid_Parent1" type="varchar(255)"/>
-            <column name="uuid_Parent2" type="varchar(255)"/>
+            <column name="mother" type="varchar(255)"/>
+            <column name="father" type="varchar(255)"/>
             <column name="name" type="varchar(255)"/>
             <column name="gender" type="varchar(255)"/>
             <column name="weight" type="numeric()"/>

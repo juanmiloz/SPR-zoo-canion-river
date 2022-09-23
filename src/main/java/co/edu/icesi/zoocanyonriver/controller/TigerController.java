@@ -4,6 +4,7 @@ import co.edu.icesi.zoocanyonriver.api.TigerApi;
 import co.edu.icesi.zoocanyonriver.constants.CodeSpecifications;
 import co.edu.icesi.zoocanyonriver.constants.CodesError;
 import co.edu.icesi.zoocanyonriver.dto.TigerDTO;
+import co.edu.icesi.zoocanyonriver.dto.TigerResponseDTO;
 import co.edu.icesi.zoocanyonriver.error.exception.TigerDemoError;
 import co.edu.icesi.zoocanyonriver.error.exception.TigerDemoException;
 import co.edu.icesi.zoocanyonriver.mapper.TigerMapper;
@@ -12,7 +13,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -26,24 +26,17 @@ public class TigerController implements TigerApi {
     TigerMapper tigerMapper;
 
     @Override
-    public List<TigerDTO> getTiger(String tigerName) {
-        List<TigerDTO> tigersDTO = new ArrayList<>();
-        tigersDTO.add(tigerMapper.fromTiger(tigerService.getTiger(tigerName)));
-        tigersDTO.addAll(getParents(tigersDTO.get(0)));
-
-        return tigersDTO;
+    public TigerResponseDTO getTiger(String tigerName) {
+        return tigerService.getTiger(tigerName);
     }
 
-    private List<TigerDTO> getParents(TigerDTO tigerDTO){
-        List<TigerDTO> parentsTiger = new ArrayList<>();
-        if(tigerDTO.getUuidParent1() != null){
-            parentsTiger.add(tigerMapper.fromTiger(tigerService.getTiger(UUID.fromString(tigerDTO.getUuidParent1()))));
-        }
-        if(tigerDTO.getUuidParent2() != null){
-            parentsTiger.add(tigerMapper.fromTiger(tigerService.getTiger(UUID.fromString(tigerDTO.getUuidParent2()))));
-        }
-        return parentsTiger;
-    }
+    /*private TigerResponseDTO getTigerDTOParents(TigerDTO tigerDTO){
+        TigerDTO mother = tigerMapper.fromTiger(tigerService.getTiger(UUID.fromString(tigerDTO.getMother())));
+        TigerDTO father = tigerMapper.fromTiger(tigerService.getTiger(UUID.fromString(tigerDTO.getMother())));
+        TigerResponseDTO tigerResponseDTO = tigerMapper.fromTigerDTOToTigerDTOParents(tigerDTO, mother, father);
+
+        return tigerResponseDTO;
+    }*/
 
     @Override
     public TigerDTO createTiger(TigerDTO tigerDTO) {
