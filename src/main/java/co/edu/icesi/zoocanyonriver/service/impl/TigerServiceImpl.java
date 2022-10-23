@@ -47,14 +47,12 @@ public class TigerServiceImpl implements TigerService {
 
     @Override
     public Tiger getTiger(UUID tigerId) {
-        System.out.println(tigerId instanceof UUID);
         Optional<Tiger> tiger = tigerRepository.findById(tigerId);
         return tiger.orElseThrow(() -> new TigerDemoException(HttpStatus.BAD_REQUEST,
                 new TigerDemoError(CodesError.CODE_04.getCode(), CodesError.CODE_04.getMessage())));
     }
 
     private TigerResponseDTO searchByName(String tigerName, List<Tiger> tigers) {
-        System.out.println(tigers.toString());
         for (Tiger tiger : tigers) {
             if (tiger.getName().equalsIgnoreCase(tigerName)) {
                 return getTigerDTOParents(tiger);
@@ -94,7 +92,6 @@ public class TigerServiceImpl implements TigerService {
 
     private void verifyExistenceParents(Tiger tiger) {
         if (tiger.getMother() != null) {
-            System.out.println(tiger.getMother());
             verifyMother(UUID.fromString(tiger.getMother()));
         }
         if (tiger.getFather() != null) {
@@ -103,7 +100,6 @@ public class TigerServiceImpl implements TigerService {
     }
 
     private void verifyMother(UUID uuidMother) {
-        System.out.println(tigerRepository.findAll());
         Optional<Tiger> mother = tigerRepository.findById(uuidMother);
         if (!mother.isPresent()) {
             throw new TigerDemoException(HttpStatus.BAD_REQUEST, new TigerDemoError(CodesError.CODE_13.getCode(), CodesError.CODE_13.getMessage()));
