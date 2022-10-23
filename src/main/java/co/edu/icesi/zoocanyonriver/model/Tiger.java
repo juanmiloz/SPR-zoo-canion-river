@@ -22,7 +22,6 @@ import java.util.UUID;
 @AllArgsConstructor
 public class Tiger {
     @Id
-    @Type(type = "org.hibernate.type.UUIDCharType")
     private UUID id;
 
     private String mother;

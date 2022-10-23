@@ -30,32 +30,26 @@ public class TigerController implements TigerApi {
         return tigerService.getTiger(tigerName);
     }
 
-    /*private TigerResponseDTO getTigerDTOParents(TigerDTO tigerDTO){
-        TigerDTO mother = tigerMapper.fromTiger(tigerService.getTiger(UUID.fromString(tigerDTO.getMother())));
-        TigerDTO father = tigerMapper.fromTiger(tigerService.getTiger(UUID.fromString(tigerDTO.getMother())));
-        TigerResponseDTO tigerResponseDTO = tigerMapper.fromTigerDTOToTigerDTOParents(tigerDTO, mother, father);
-
-        return tigerResponseDTO;
-    }*/
-
     @Override
     public TigerDTO createTiger(TigerDTO tigerDTO) {
-        verifyName(tigerDTO.getName());
+        verifyNameLenght(tigerDTO.getName());
+        verifyNameContent(tigerDTO.getName());
 
         return tigerMapper.fromTiger(tigerService.createTiger(tigerMapper.fromDTO(tigerDTO)));
     }
 
-    private void verifyName(String name){
-        verifyNameLenght(name);
-        verifyNameContent(name);
-    }
-
     private void verifyNameContent(String name) {
-        if(!name.matches("[a-zA-Z\\s]+")){throw new TigerDemoException(HttpStatus.BAD_REQUEST, new TigerDemoError( CodesError.CODE_O1.getCode() ,CodesError.CODE_O1.getMessage()));}
+        if (!name.matches("[a-zA-Z\\s]+")) {
+            throw new TigerDemoException(HttpStatus.BAD_REQUEST,
+                        new TigerDemoError(CodesError.CODE_O1.getCode(), CodesError.CODE_O1.getMessage()));
+        }
     }
 
     private void verifyNameLenght(String name) {
-        if(name.length()> CodeSpecifications.MAX_LEGTH_NAME.getValue()){throw new TigerDemoException(HttpStatus.BAD_REQUEST, new TigerDemoError(CodesError.CODE_02.getCode(), CodesError.CODE_02.getMessage()));}
+        if (name.length() > CodeSpecifications.MAX_LEGTH_NAME.getValue()) {
+            throw new TigerDemoException(HttpStatus.BAD_REQUEST,
+                    new TigerDemoError(CodesError.CODE_02.getCode(), CodesError.CODE_02.getMessage()));
+        }
     }
 
     @Override

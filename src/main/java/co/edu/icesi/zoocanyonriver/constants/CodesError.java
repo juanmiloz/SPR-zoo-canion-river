@@ -16,7 +16,6 @@ public enum CodesError {
     CODE_07("CODE_07", "The genre I am trying to enter is not allowed"),
     CODE_08("CODE_08", "The age entered is not allowed"),
     CODE_09("CODE_09", "The height entered is outside the established ranges"),
-    CODE_10("CODE_10", "The gender of the parents is the same"),
     CODE_11("CODE_11", "The date entered is greater than current date"),
     CODE_12("CODE_12", "The name you entered is already registered, please change the name"),
     CODE_13("CODE_13", "The mother's id entered does not belong to any tiger"),
