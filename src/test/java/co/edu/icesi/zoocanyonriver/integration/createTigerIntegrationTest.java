@@ -209,6 +209,7 @@ public class createTigerIntegrationTest {
     @SneakyThrows
     public void verifyWeightMale() {
         TigerDTO baseTiger = baseTiger();
+        baseTiger.setName("invalid tiger");
         baseTiger.setGender("Male");
         baseTiger.setWeight(320);
         String body = objectMapper.writeValueAsString(baseTiger);
@@ -226,6 +227,7 @@ public class createTigerIntegrationTest {
     @SneakyThrows
     public void verifyWeightFemale() {
         TigerDTO baseTiger = baseTiger();
+        baseTiger.setName("tigerInvalid");
         baseTiger.setGender("Female");
         baseTiger.setWeight(300);
         String body = objectMapper.writeValueAsString(baseTiger);

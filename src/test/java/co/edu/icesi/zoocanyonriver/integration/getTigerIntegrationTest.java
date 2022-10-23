@@ -71,7 +71,7 @@ public class getTigerIntegrationTest {
 
         TigerResponseDTO tigerResult = objectMapper.readValue(result.getResponse().getContentAsString(), TigerResponseDTO.class);
 
-        assertThat(tigerResult, hasProperty("id",is(UUID.fromString("98d0c8af-3e20-4be9-8158-fc74c7b4d32d"))));
+        assertThat(tigerResult, hasProperty("id", is(UUID.fromString("98d0c8af-3e20-4be9-8158-fc74c7b4d32d"))));
     }
 
     @Test
@@ -96,15 +96,15 @@ public class getTigerIntegrationTest {
                 .andReturn();
 
         TigerResponseDTO tigerResult = objectMapper.readValue(result.getResponse().getContentAsString(), TigerResponseDTO.class);
-        assertThat(tigerResult, hasProperty("id",is(UUID.fromString("999da34f-9e21-4392-b224-6185ee90ae40"))));
-        assertThat(tigerResult, hasProperty("mother",is(tigerResult.getMother())));
-        assertThat(tigerResult, hasProperty("father",is(tigerResult.getFather())));
-        assertThat(tigerResult, hasProperty("name",is("Alex")));
-        assertThat(tigerResult, hasProperty("gender",is("Male")));
-        assertThat(tigerResult, hasProperty("weight",is(180.0)));
-        assertThat(tigerResult, hasProperty("age",is("2")));
-        assertThat(tigerResult, hasProperty("height",is("110")));
-        assertThat(tigerResult, hasProperty("arriveDate",is(LocalDateTime.parse("2022-09-23T20:37:15"))));
+        assertThat(tigerResult, hasProperty("id", is(UUID.fromString("999da34f-9e21-4392-b224-6185ee90ae40"))));
+        assertThat(tigerResult, hasProperty("mother", is(tigerResult.getMother())));
+        assertThat(tigerResult, hasProperty("father", is(tigerResult.getFather())));
+        assertThat(tigerResult, hasProperty("name", is("Alex")));
+        assertThat(tigerResult, hasProperty("gender", is("Male")));
+        assertThat(tigerResult, hasProperty("weight", is(180.0)));
+        assertThat(tigerResult, hasProperty("age", is("2")));
+        assertThat(tigerResult, hasProperty("height", is("110")));
+        assertThat(tigerResult, hasProperty("arriveDate", is(LocalDateTime.parse("2022-09-23T20:37:15"))));
     }
 
     @Test
@@ -118,12 +118,6 @@ public class getTigerIntegrationTest {
         TigerDemoError exceptionResult = objectMapper.readValue(result.getResponse().getContentAsString(), TigerDemoError.class);
         assertThat(exceptionResult, hasProperty("code", is(CodesError.CODE_04.getCode())));
         assertThat(exceptionResult, hasProperty("message", is(CodesError.CODE_04.getMessage())));
-    }
-
-    @SneakyThrows
-    private TigerDTO baseTiger() {
-        String body = parseResourceToString("createTiger.json");
-        return objectMapper.readValue(body, TigerDTO.class);
     }
 
     @SneakyThrows
